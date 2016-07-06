@@ -14,36 +14,40 @@
 // function to return the next available seat
 // inputs: customer name 
 // output: a seat number, or -1 if none available
-int sell_seat(struct Seatmap* map, char* name)
+int sell_seat(struct Seatmap* map, struct Buyer* b)
 {
 	// seller threads will execute this function to get seats
 	// only one seller at a time can execute 
 	
-	// get the mutex
-		// if mutex not available, wait. 
-		
-	//entered critical region
+
 	
 	// place customer name on map at next available seat for the 
 	// priority
-	int seat_num = set_seat(map, name);
+	int isSet = set_seat(map, b);
 
 	// if seat_num = -1, no more seats available
-	// release mutex
-	
-	return seat_num; 
+	return isSet; 
 }
 
 // a routine to print the seat map 
 void print_seatmap(struct Seatmap* map)
 {
+	char* toprint; 
+	char* dashes = "----";
+
 	// go through the seats and print them. 
 	for(int row =0; row < NUM_OF_ROWS; row++)
 	{
 		printf("ROW: %d\t", row); 
 		for(int seat = 0; seat < SEATS_PER_ROW; seat++)
-		{
-			printf("%s\t", map->seatmap[row][seat]);
+		{	
+			if(map->seatmap[row][seat] == NULL)
+			{
+				toprint = dashes;
+			}else{
+				toprint = map->seatmap[row][seat]->name;
+			}
+			printf("%s\t", toprint);
 		}
 		printf("\n");
 	}
@@ -56,16 +60,17 @@ void initialize_seatmap(struct Seatmap* map)
 	{ 
 		for(int seat = 0; seat < SEATS_PER_ROW; seat++)
 		{
-			strcpy(map->seatmap[row][seat],"----");
+			map->seatmap[row][seat] = NULL;
 		}
 	}
 }
 // a routine to manage the seat sales
 // uses pointers to determine where the remaining seats are 
 // return -1 if no seats left, 0 if seat set
-int set_seat(struct Seatmap* map, char* name)
+int set_seat(struct Seatmap* map, struct Buyer* b)
 {
 	// figure out the section by stripping the buyer name first char
+	char* name = b->name;
 	char section = name[0]; 
 	
 	int seat_ptr, end_ptr, jump; 
@@ -82,7 +87,7 @@ int set_seat(struct Seatmap* map, char* name)
 			break;
 		case 'L': 
 			seat_ptr = 99;
-			end_ptr = 69; 
+			end_ptr = 0; 
 			jump = -1; 	// this one goes backwards.  
 			
 	}
@@ -91,18 +96,22 @@ int set_seat(struct Seatmap* map, char* name)
 	
 	int row = (int) seat_ptr / 10; 
 	int seat = seat_ptr - row; 
-	int eq = strcmp(map->seatmap[row][seat],"----");
+	struct Buyer* t = map->seatmap[row][seat];
 	
-	while(eq == 0) // seat is taken and more are left
+	while(t != NULL) // seat is taken and more are left
 	{
-		seat_ptr += jump; // inc or dec the seat ptr as necessary
-		if(seat_ptr == end_ptr) return -1; // ran out of seats to check. 
 		row = (int) seat_ptr /10; 
-		seat = seat_ptr - row; 
-		eq = strcmp(map->seatmap[row][seat],"----");
+		seat = seat_ptr - row * 10; 
+	//	printf("testing row %d seat %d for buyer %s\n",row, seat, b->name);
+		if(seat_ptr == end_ptr) return -1; // ran out of seats to check. 
+		t = map->seatmap[row][seat];
+		seat_ptr += jump; // inc or dec the seat ptr as necessary
 	}
 	
-	// if we got hear, we set the seat
-	return 0; 
+	// if we got here, we set the seat
+	printf("set row %d seat %d for buyer %s\n", row, seat, b->name);
+	map->seatmap[row][seat] = b;
+
+	return seat_ptr; 
 }
  
