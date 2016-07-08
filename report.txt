@@ -1,0 +1,26 @@
+CS 149 
+summer 2016
+section 1
+John Kennedy
+001462826
+
+
+report on homework 3 - process synchronization and pthreads. 
+
+
+I found that the biggest challenge of this project was working in C in a modular fashion. 
+
+The use of pointers and memory allocation provided ample segmentation faults and aborts. 
+
+
+Once past those, the challenge became using a centralized clock to let the threads work 
+
+together. the critical region in this project was the sell_seat function, which needed a 
+
+mutext to prevent overwriting of the seatmap. The mutext waiting time made a number of 
+
+customers wait too long to get tickets in some cases. 
+
+Please see attached code and output. 
+
+
