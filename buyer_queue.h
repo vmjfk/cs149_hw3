@@ -16,5 +16,9 @@ void sort_buyers(struct Buyer* buyers[], int count);
 struct BuyerQueue* init_BuyerQueue(struct Buyer* buyers[], int count);
 
 // function to dequeue a buyer struct
-int BuyerQueue_dequeue ( struct Buyer* b, struct BuyerQueue* q);
+struct Buyer* BuyerQueue_dequeue (struct BuyerQueue* q);
+struct Buyer* BuyerQueue_peek(struct BuyerQueue* q, int position);
+struct Buyer* BuyerArray_peek(struct Buyer* buyers[], int position);
+void printBuyerQueue(struct BuyerQueue* q);
+
 

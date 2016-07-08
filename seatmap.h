@@ -4,8 +4,8 @@
 * john kennedy
 *
 */
-#include "buyer.h"
-
+#include "buyer_queue.h"
+#include <pthread.h>
 //	seatmap is an array of char*, which hold the id of whoever bought a
 //	ticket, or no one. 
 
@@ -14,6 +14,8 @@
 
 struct Seatmap {
 	struct Buyer* seatmap[NUM_OF_ROWS][SEATS_PER_ROW]; // records who owns seat
+	pthread_mutex_t* mutex;							// lock for the seatmap
+	pthread_cond_t* cond; 
 };
 
 

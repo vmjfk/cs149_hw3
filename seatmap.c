@@ -77,16 +77,16 @@ int set_seat(struct Seatmap* map, struct Buyer* b)
 	switch(section) { 
 		case 'H': 
 			seat_ptr = 0; 	
-			end_ptr = 100; // the first seat this ptr can't go to . 
+			end_ptr = NUM_OF_ROWS * SEATS_PER_ROW; // the first seat this ptr can't go to . 
 			jump = 1;		// this pointer increments 
 			break; 
 		case 'M':
-			seat_ptr = 40; 
-			end_ptr = 100;
+			seat_ptr = 4 * SEATS_PER_ROW; 
+			end_ptr =  NUM_OF_ROWS * SEATS_PER_ROW;
 			jump = 1;
 			break;
 		case 'L': 
-			seat_ptr = 99;
+			seat_ptr =  NUM_OF_ROWS * SEATS_PER_ROW -1 ;
 			end_ptr = 0; 
 			jump = -1; 	// this one goes backwards.  
 			
@@ -94,14 +94,14 @@ int set_seat(struct Seatmap* map, struct Buyer* b)
 	
 	// start iterating through the seats to find an available one. 
 	
-	int row = (int) seat_ptr / 10; 
-	int seat = seat_ptr - row; 
+	int row = (int) seat_ptr / SEATS_PER_ROW; 
+	int seat = seat_ptr - row * SEATS_PER_ROW; 
 	struct Buyer* t = map->seatmap[row][seat];
 	
 	while(t != NULL) // seat is taken and more are left
 	{
-		row = (int) seat_ptr /10; 
-		seat = seat_ptr - row * 10; 
+		row = (int) seat_ptr /SEATS_PER_ROW; 
+		seat = seat_ptr - row * SEATS_PER_ROW; 
 	//	printf("testing row %d seat %d for buyer %s\n",row, seat, b->name);
 		if(seat_ptr == end_ptr) return -1; // ran out of seats to check. 
 		t = map->seatmap[row][seat];
@@ -109,9 +109,9 @@ int set_seat(struct Seatmap* map, struct Buyer* b)
 	}
 	
 	// if we got here, we set the seat
-	printf("set row %d seat %d for buyer %s\n", row, seat, b->name);
+//	printf("set row %d seat %d for buyer %s\n", row, seat, b->name);
 	map->seatmap[row][seat] = b;
 
-	return seat_ptr; 
+	return row * SEATS_PER_ROW + seat; 
 }
  
